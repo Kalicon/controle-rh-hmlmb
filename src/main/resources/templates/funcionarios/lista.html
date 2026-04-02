@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/base/head :: head('Funcionários')}"></head>
+
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav th:replace="~{fragments/menu :: menu}"></nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Gestão de Funcionários</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a th:href="@{/funcionarios/novo}" class="btn btn-primary">
+                        <span data-feather="plus"></span>
+                        Novo Funcionário
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Funcionários Cadastrados
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="funcionariosTable" class="table table-hover table-sm align-middle">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Cargo</th>
+                                <th scope="col">RS</th>
+                                <th scope="col">Regime</th>
+                                <th scope="col" class="text-center no-sort">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="func : ${funcionarios}">
+                                <th scope="row" th:text="${func.id}"></th>
+                                <td th:text="${func.nome}"></td>
+                                <td th:text="${func.cargo}"></td>
+                                <td th:text="${func.rs}"></td>
+                                <td th:text="${func.regimeJuridico}"></td>
+                                <td class="text-center">
+                                    <a th:href="@{/funcionarios/editar/{id}(id=${func.id})}" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                        <span data-feather="edit-2"></span>
+                                    </a>
+                                    <a th:href="@{/funcionarios/deletar/{id}(id=${func.id})}" class="btn btn-sm btn-outline-danger" title="Deletar"
+                                       onclick="return confirm('Tem certeza que deseja deletar este funcionário?');">
+                                        <span data-feather="trash-2"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<div th:replace="~{fragments/base/footer :: footer}"></div>
+
+<script>
+    $(document).ready(function() {
+        $('#funcionariosTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": "no-sort" }
+            ]
+        });
+    });
+</script>
+
+</body>
+</html>

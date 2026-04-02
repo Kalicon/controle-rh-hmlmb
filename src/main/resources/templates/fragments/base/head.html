@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' - Controle RH HMLMB'"></title>
+
+    <!-- TEMA BOOTSTRAP "LITERA" -->
+    <link href="https://bootswatch.com/5/litera/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS do DataTables -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <style>
+        body { background-color: #f8f9fa; font-size: .9rem; }
+        .sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 56px 0 0; box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1); }
+        .navbar { z-index: 101; }
+        .nav-link.active { font-weight: 500; }
+        .feather { width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 5px; }
+        .table-hover tbody tr:hover { background-color: rgba(0,0,0,.04); }
+        .card { border: 1px solid rgba(0,0,0,.125); }
+        .dataTables_wrapper .row:first-child { padding-bottom: 1rem; }
+        .no-sort::after, .no-sort::before { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Este body não será usado, é apenas para o fragmento ser válido -->
+</body>
+</html>

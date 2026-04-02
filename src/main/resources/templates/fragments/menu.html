@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="menu" id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+    <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/requerimentos}">
+                    <span data-feather="file-text"></span>
+                    Requerimentos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/funcionarios}">
+                    <span data-feather="users"></span>
+                    Funcionários
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+</body>
+</html>

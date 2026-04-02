@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="footer">
+    <!-- JS Core do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JS do Feather Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <!-- JS do JQuery (necessário para o DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <!-- JS do DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        // Inicializa os ícones em toda a aplicação
+        feather.replace();
+    </script>
+</div>
+
+</body>
+</html>
