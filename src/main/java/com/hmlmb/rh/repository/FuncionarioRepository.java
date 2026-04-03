@@ -9,6 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {
+
     Optional<Funcionario> findByRs(String rs);
-    List<Funcionario> findByNomeContainingIgnoreCase(String nome); // Para o autocomplete
+
+    List<Funcionario> findByNomeContainingIgnoreCase(String nome);
 }

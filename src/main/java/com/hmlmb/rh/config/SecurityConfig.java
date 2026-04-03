@@ -1,57 +1,50 @@
 package com.hmlmb.rh.config;
 
+import com.hmlmb.rh.service.JpaUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true) // Habilita @PreAuthorize
 public class SecurityConfig {
+
+    private final JpaUserDetailsService jpaUserDetailsService;
+
+    public SecurityConfig(JpaUserDetailsService jpaUserDetailsService) {
+        this.jpaUserDetailsService = jpaUserDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                .anyRequest().authenticated() // Todas as rotas precisam de login
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/login", "/register").permitAll()
+                .anyRequest().authenticated()
             )
+            .userDetailsService(jpaUserDetailsService)
             .formLogin((form) -> form
-                .loginPage("/login") // Nossa tela customizada
-                .defaultSuccessUrl("/requerimentos", true) // Vai pra lista após logar
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
                 .permitAll()
             )
             .logout((logout) -> logout
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-            .csrf(csrf -> csrf.disable()); // Desabilitado para facilitar os uploads via JS no momento
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
 
-    // Login hardcoded na memória por enquanto (pode ser trocado por banco de dados depois)
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails admin =
-             User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("hmlmb2024")
-                .roles("ADMIN")
-                .build();
-
-        UserDetails rh =
-             User.withDefaultPasswordEncoder()
-                .username("rh")
-                .password("123456")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, rh);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

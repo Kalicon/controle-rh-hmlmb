@@ -1,116 +1,35 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de RH</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            padding: 20px;
-        }
-        .header {
-            background-color: #fff;
-            padding: 20px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header h1 {
-            margin: 0;
-            color: #0056b3;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        .card h2 {
-            margin-top: 0;
-        }
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        nav { background-color: #333; padding: 10px 0; }
+        nav ul { list-style-type: none; margin: 0; padding: 0; display: flex; justify-content: center; }
+        nav ul li { margin: 0 15px; }
+        nav ul li a { color: white; text-decoration: none; padding: 8px 12px; display: block; }
+        nav ul li a:hover { background-color: #575757; border-radius: 4px; }
+        .container { padding: 20px; text-align: center; }
     </style>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/user-management">Gerenciamento de Usuários</a></li>
+            <li><a href="/funcionarios/lista">Lista de Funcionários</a></li>
+            <li><a href="/funcionarios/formulario">Formulário de Funcionário</a></li>
+            <li><a href="/requerimentos/lista">Lista de Requerimentos</a></li>
+            <li><a href="/requerimentos/formulario">Formulário de Requerimento</a></li>
+        </ul>
+    </nav>
 
-<div class="header">
-    <h1>Dashboard de RH</h1>
-</div>
-
-<div class="container">
-    <div class="grid">
-        <div class="card">
-            <h2>Total de Funcionários</h2>
-            <p th:text="${totalFuncionarios}" style="font-size: 2em; font-weight: bold;">150</p>
-        </div>
-        <div class="card">
-            <h2>Férias no Mês</h2>
-            <p th:text="${totalFeriasMes}" style="font-size: 2em; font-weight: bold;">12</p>
-        </div>
-        <div class="card">
-            <h2>Requerimentos Fora do Prazo</h2>
-            <p th:text="${requerimentosForaPrazo}" style="font-size: 2em; font-weight: bold;">5</p>
-        </div>
+    <div class="container">
+        <h1>Bem-vindo ao Dashboard</h1>
+        <p>Aqui você pode navegar para as diferentes seções do sistema.</p>
+        <!-- Conteúdo original do dashboard seria inserido aqui, se pudesse ser lido -->
     </div>
-
-    <div class="grid" style="margin-top: 20px;">
-        <div class="card">
-            <h2>Férias por Departamento</h2>
-            <div class="chart-container">
-                <canvas id="feriasChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    var departamentos = /*[[${departamentos}]]*/ [];
-    var feriasPorDepartamento = /*[[${feriasPorDepartamento}]]*/ [];
-    /*]]>*/
-
-    var ctx = document.getElementById('feriasChart').getContext('2d');
-    var feriasChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: departamentos,
-            datasets: [{
-                label: 'Nº de Férias',
-                data: feriasPorDepartamento,
-                backgroundColor: 'rgba(0, 86, 179, 0.5)',
-                borderColor: 'rgba(0, 86, 179, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
-
 </body>
 </html>

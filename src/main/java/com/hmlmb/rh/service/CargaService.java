@@ -3,6 +3,7 @@ package com.hmlmb.rh.service;
 import com.hmlmb.rh.model.Funcionario;
 import com.hmlmb.rh.repository.FuncionarioRepository;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Optional;
 
 @Service
 public class CargaService {
@@ -33,17 +35,19 @@ public class CargaService {
 
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
-                Funcionario funcionario = new Funcionario();
+                String rs = getStringValue(row.getCell(1));
 
-                funcionario.setNome(getStringValue(row.getCell(0)));
-                funcionario.setRs(getStringValue(row.getCell(1)));
-                funcionario.setPv(getIntegerValue(row.getCell(2)));
-                funcionario.setCargo(getStringValue(row.getCell(3)));
-                funcionario.setRegimeJuridico(getStringValue(row.getCell(4)));
-
-                // Evita salvar funcionários com RS duplicado ou nulo
-                if (funcionario.getRs() != null && !funcionario.getRs().isEmpty()) {
-                    funcionarioRepository.save(funcionario);
+                if (rs != null && !rs.isEmpty()) {
+                    Optional<Funcionario> funcionarioExistente = funcionarioRepository.findByRs(rs);
+                    if (funcionarioExistente.isEmpty()) {
+                        Funcionario funcionario = new Funcionario();
+                        funcionario.setNome(getStringValue(row.getCell(0)));
+                        funcionario.setRs(rs);
+                        funcionario.setPv(getIntegerValue(row.getCell(2)));
+                        funcionario.setCargo(getStringValue(row.getCell(3)));
+                        funcionario.setRegimeJuridico(getStringValue(row.getCell(4)));
+                        funcionarioRepository.save(funcionario);
+                    }
                 }
             }
         }
@@ -67,7 +71,7 @@ public class CargaService {
         if (cell == null) {
             return null;
         }
-        if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+        if (cell.getCellType() == CellType.NUMERIC) {
             return (int) cell.getNumericCellValue();
         }
         return null;

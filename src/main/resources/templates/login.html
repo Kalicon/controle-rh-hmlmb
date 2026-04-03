@@ -1,78 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Controle de RH</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de RH</title>
     <style>
-        html,
-        body {
-            height: 100%;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            padding-top: 40px;
-            padding-bottom: 40px;
-            background-color: #f5f5f5;
-        }
-
-        .form-signin {
-            width: 100%;
-            max-width: 330px;
-            padding: 15px;
-            margin: auto;
-        }
-
-        .form-signin .checkbox {
-            font-weight: 400;
-        }
-
-        .form-signin .form-floating:focus-within {
-            z-index: 2;
-        }
-
-        .form-signin input[type="text"] {
-            margin-bottom: -1px;
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        .form-signin input[type="password"] {
-            margin-bottom: 10px;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; }
+        .login-container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h1 { text-align: center; color: #0056b3; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #004494; }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; text-align: center; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; }
+        .footer-links { text-align: center; margin-top: 20px; }
+        .footer-links a { color: #0056b3; text-decoration: none; }
     </style>
 </head>
-<body class="text-center">
-
-<main class="form-signin">
+<body>
+<div class="login-container">
+    <h1>Acessar Sistema</h1>
+    <div th:if="${param.error}" class="alert alert-danger">
+        Usuário ou senha inválidos.
+    </div>
+    <div th:if="${param.logout}" class="alert alert-info">
+        Você foi desconectado.
+    </div>
     <form th:action="@{/login}" method="post">
-        <h1 class="h3 mb-3 fw-normal">Controle de RH</h1>
-
-        <div th:if="${param.error}" class="alert alert-danger">
-            Usuário ou senha inválidos.
+        <div class="form-group">
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" name="username" required autofocus>
         </div>
-        <div th:if="${param.logout}" class="alert alert-success">
-            Você foi desconectado.
+        <div class="form-group">
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
         </div>
-
-        <div class="form-floating">
-            <input type="text" class="form-control" id="username" name="username" placeholder="Usuário" required autofocus>
-            <label for="username">Usuário</label>
-        </div>
-        <div class="form-floating">
-            <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
-            <label for="password">Senha</label>
-        </div>
-
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
-        <p class="mt-5 mb-3 text-muted">&copy; 2024 HMLMB</p>
+        <button type="submit">Entrar</button>
     </form>
-</main>
-
+    <div class="footer-links">
+        <a th:href="@{/register}">Não tem uma conta? Registre-se</a>
+    </div>
+</div>
 </body>
 </html>
