@@ -1,0 +1,5 @@
+# Para leitura de arquivos PDF
+PyPDF2
+
+# Para fazer requisições HTTP para a API Java
+requests

@@ -20,6 +20,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private boolean enabled = false; // Novo campo para controle de ativação
+
     @ManyToMany(fetch = FetchType.EAGER) // Carrega os roles junto com o usuário
     @JoinTable(
         name = "user_roles",
