@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Usuários</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 0; }
+        .container { padding: 20px; max-width: 1200px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #0056b3; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        .actions { display: flex; gap: 10px; }
+        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background-color: #0056b3; color: white; }
+        .btn-primary:hover { background-color: #004494; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-danger:hover { background-color: #c82333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="password"] { width: calc(100% - 24px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .alert { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; }
+        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .alert-danger { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Gestão de Usuários</h1>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuário</th>
+                <th>Roles</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td>
+                    <span th:text="${user.username}">admin</span>
+                    <!-- Formulário de Edição (oculto por padrão, pode ser exibido com JS) -->
+                    <form th:action="@{/users/{id}/update(id=${user.id})}" method="post" style="display: none;" th:id="'editForm-' + ${user.id}">
+                        <div class="form-group">
+                            <label for="username">Novo Usuário:</label>
+                            <input type="text" id="username" name="username" th:value="${user.username}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Nova Senha (deixe em branco para não alterar):</label>
+                            <input type="password" id="password" name="password">
+                        </div>
+                        <div class="form-group">
+                            <label>Roles:</label>
+                            <div>
+                                <input type="checkbox" th:id="'roleAdmin-' + ${user.id}" name="roles" value="ROLE_ADMIN" th:checked="${user.roles.?[name == 'ROLE_ADMIN'].size() > 0}">
+                                <label th:for="'roleAdmin-' + ${user.id}">ADMIN</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" th:id="'roleUser-' + ${user.id}" name="roles" value="ROLE_USER" th:checked="${user.roles.?[name == 'ROLE_USER'].size() > 0}">
+                                <label th:for="'roleUser-' + ${user.id}">USER</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-secondary" th:onclick="|toggleEditForm(${user.id})|">Cancelar</button>
+                    </form>
+                </td>
+                <td>
+                    <span th:each="role, iterStat : ${user.roles}" th:text="${role.name} + (${iterStat.last} ? '' : ', ')">ROLE_ADMIN</span>
+                </td>
+                <td class="actions">
+                    <button type="button" class="btn btn-primary" th:onclick="|toggleEditForm(${user.id})|">Editar</button>
+                    <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function toggleEditForm(userId) {
+        var form = document.getElementById('editForm-' + userId);
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
