@@ -14,7 +14,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-uppercase text-white-50 fw-bold mb-2">Funcionários</h6>
-                                <h2 class="mb-0 fw-bold">124</h2>
+                                <h2 class="mb-0 fw-bold" th:text="${totalFuncionarios}">0</h2>
                             </div>
                             <div class="bg-white bg-opacity-25 p-3 rounded-circle">
                                 <i class="fas fa-users fa-2x text-white"></i>
@@ -35,7 +35,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-uppercase text-white-50 fw-bold mb-2">Férias Ativas</h6>
-                                <h2 class="mb-0 fw-bold">18</h2>
+                                <h2 class="mb-0 fw-bold" th:text="${totalFeriasMes}">0</h2>
                             </div>
                             <div class="bg-white bg-opacity-25 p-3 rounded-circle">
                                 <i class="fas fa-umbrella-beach fa-2x text-white"></i>
@@ -43,7 +43,7 @@
                         </div>
                     </div>
                     <div class="card-footer bg-success border-0 p-3 d-flex align-items-center justify-content-between" style="border-top: 1px solid rgba(255,255,255,0.2) !important;">
-                        <a class="small text-white stretched-link text-decoration-none fw-semibold" href="#">Ver Detalhes</a>
+                        <a class="small text-white stretched-link text-decoration-none fw-semibold" href="/requerimentos/lista">Ver Detalhes</a>
                         <div class="small text-white"><i class="fas fa-arrow-right"></i></div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-uppercase text-dark-50 fw-bold mb-2" style="opacity: 0.7;">Requerimentos</h6>
-                                <h2 class="mb-0 fw-bold">45</h2>
+                                <h2 class="mb-0 fw-bold" th:text="${totalRequerimentos}">0</h2>
                             </div>
                             <div class="bg-dark bg-opacity-10 p-3 rounded-circle">
                                 <i class="fas fa-file-signature fa-2x text-dark"></i>
@@ -77,7 +77,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-uppercase text-white-50 fw-bold mb-2">Pendências</h6>
-                                <h2 class="mb-0 fw-bold">7</h2>
+                                <h2 class="mb-0 fw-bold" th:text="${requerimentosForaPrazo}">0</h2>
                             </div>
                             <div class="bg-white bg-opacity-25 p-3 rounded-circle">
                                 <i class="fas fa-exclamation-circle fa-2x text-white"></i>

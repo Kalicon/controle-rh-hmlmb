@@ -38,7 +38,7 @@ public class RequerimentoController {
     /**
      * Lista requerimentos com base no ano do Exercício e no Mês.
      */
-    @GetMapping
+    @GetMapping("/lista") // <-- CORREÇÃO: Mapeamento explícito para /lista
     public String listarRequerimentos(
             @RequestParam(name = "ano", required = false) Integer ano, 
             @RequestParam(name = "mes", required = false) Integer mes,
@@ -53,13 +53,37 @@ public class RequerimentoController {
         model.addAttribute("exercicioAtual", exercicioAtual);
         model.addAttribute("mesAtual", mes);
         
+        // Adiciona as variáveis para o novo layout
+        model.addAttribute("pageTitle", "Lista de Requerimentos");
+        model.addAttribute("activePage", "req_lista");
+
         return "requerimentos/lista";
     }
 
-    @GetMapping("/novo")
+    @GetMapping("/formulario") // <-- CORREÇÃO: Mapeamento explícito para /formulario
     public String exibirFormulario(Model model) {
         model.addAttribute("requerimento", new Requerimento());
+        
+        // Adiciona as variáveis para o novo layout
+        model.addAttribute("pageTitle", "Novo Requerimento");
+        model.addAttribute("activePage", "req_form");
+
         return "requerimentos/formulario";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String exibirFormularioEdicao(@PathVariable Long id, Model model) {
+        Optional<Requerimento> requerimento = repository.findById(id);
+        if (requerimento.isPresent()) {
+            model.addAttribute("requerimento", requerimento.get());
+            
+            // Adiciona as variáveis para o novo layout
+            model.addAttribute("pageTitle", "Editar Requerimento");
+            model.addAttribute("activePage", "req_form"); // Mesma aba ativa no menu
+
+            return "requerimentos/formulario";
+        }
+        return "redirect:/requerimentos/lista";
     }
 
     @PostMapping
@@ -68,11 +92,17 @@ public class RequerimentoController {
         // Pega o mês que ele acabou de salvar para redirecionar certinho
         Integer mesSalvo = requerimento.getDataInicio() != null ? requerimento.getDataInicio().getMonthValue() : null;
         
-        String redirectUrl = "redirect:/requerimentos?ano=" + requerimento.getExercicio();
+        String redirectUrl = "redirect:/requerimentos/lista?ano=" + requerimento.getExercicio(); // <-- CORREÇÃO: Redireciona para /lista
         if(mesSalvo != null){
             redirectUrl += "&mes=" + mesSalvo;
         }
         return redirectUrl;
+    }
+
+    @GetMapping("/deletar/{id}")
+    public String deletarRequerimento(@PathVariable Long id) {
+        repository.deleteById(id);
+        return "redirect:/requerimentos/lista";
     }
 
     /**

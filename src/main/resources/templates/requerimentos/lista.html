@@ -16,7 +16,7 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Gestão de Requerimentos</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a th:href="@{/requerimentos/novo}" class="btn btn-primary">
+                    <a th:href="@{/requerimentos/formulario}" class="btn btn-primary">
                         <span data-feather="plus"></span>
                         Novo Requerimento
                     </a>
@@ -29,7 +29,7 @@
                     Filtros
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/requerimentos}" method="get" class="row g-3">
+                    <form th:action="@{/requerimentos/lista}" method="get" class="row g-3">
                         <div class="col-md-4">
                             <label for="ano" class="form-label">Exercício</label>
                             <input type="number" class="form-control" id="ano" name="ano" th:value="${exercicioAtual}" placeholder="Ano do Exercício">
@@ -66,7 +66,6 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Servidor</th>
                                 <th scope="col">Cargo</th>
-                                <th scope="col">Tipo</th>
                                 <th scope="col">Início</th>
                                 <th scope="col">Fim</th>
                                 <th scope="col">Exercício</th>
@@ -76,15 +75,18 @@
                             <tbody>
                             <tr th:each="req : ${requerimentos}">
                                 <th scope="row" th:text="${req.id}"></th>
-                                <td th:text="${req.nomeServidor}"></td>
+                                <td th:text="${req.nome}"></td>
                                 <td th:text="${req.cargo}"></td>
-                                <td th:text="${req.tipoRequerimento}"></td>
                                 <td th:text="${req.dataInicio != null ? #temporals.format(req.dataInicio, 'dd/MM/yyyy') : ''}"></td>
-                                <td th:text="${req.dataFim != null ? #temporals.format(req.dataFim, 'dd/MM/yyyy') : ''}"></td>
+                                <td th:text="${req.dataTermino != null ? #temporals.format(req.dataTermino, 'dd/MM/yyyy') : ''}"></td>
                                 <td th:text="${req.exercicio}"></td>
                                 <td class="text-center">
-                                    <a href="#" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <a th:href="@{/requerimentos/editar/{id}(id=${req.id})}" class="btn btn-sm btn-outline-secondary" title="Editar">
                                         <span data-feather="edit-2"></span>
+                                    </a>
+                                    <a th:href="@{/requerimentos/deletar/{id}(id=${req.id})}" class="btn btn-sm btn-outline-danger" title="Deletar"
+                                       onclick="return confirm('Tem certeza que deseja deletar este requerimento?');">
+                                        <span data-feather="trash-2"></span>
                                     </a>
                                 </td>
                             </tr>

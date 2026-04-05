@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
 
 @Repository
 public interface RequerimentoRepository extends JpaRepository<Requerimento, Long> {
@@ -19,4 +20,9 @@ public interface RequerimentoRepository extends JpaRepository<Requerimento, Long
     // Retorna uma lista de Arrays de Object onde [0] é nome, [1] é cargo, [2] é rs, [3] é pv
     @Query("SELECT DISTINCT r.nome, r.cargo, r.rs, r.pv, r.regimeJuridico FROM Requerimento r WHERE r.nome IS NOT NULL")
     List<Object[]> findDistinctServidores();
+
+    // Counts how many vacation requests are active right now
+    @Query("SELECT COUNT(r) FROM Requerimento r WHERE :currentDate BETWEEN r.dataInicio AND r.dataTermino")
+    long countFeriasAtivas(LocalDate currentDate);
+
 }

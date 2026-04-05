@@ -1,90 +1,67 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{fragments/base/head :: head(${funcionario.id == null} ? 'Novo Funcionário' : 'Editar Funcionário')}"></head>
-
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${funcionario.id == null ? 'Novo Funcionário' : 'Editar Funcionário'}"></title>
+</head>
 <body>
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i th:class="${funcionario.id == null ? 'fas fa-user-plus me-2' : 'fas fa-user-edit me-2'}"></i>
+                            <span th:text="${funcionario.id == null ? 'Cadastro de Novo Funcionário' : 'Edição de Funcionário'}"></span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/funcionarios}" th:object="${funcionario}" method="post" class="row g-3">
+                            <input type="hidden" th:field="*{id}" />
 
-<header th:replace="~{fragments/header :: header}"></header>
-
-<div class="container-fluid">
-    <div class="row">
-        <nav th:replace="~{fragments/menu :: menu}"></nav>
-
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-4">
-
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2" th:text="${funcionario.id == null} ? 'Novo Funcionário' : 'Editar Funcionário'"></h1>
-            </div>
-
-            <div class="card">
-                <div class="card-header" th:text="${funcionario.id == null} ? 'Dados do Novo Funcionário' : 'Editando dados de ' + ${funcionario.nome}">
-                </div>
-                <div class="card-body">
-                    <form th:action="@{/funcionarios}" th:object="${funcionario}" method="post">
-                        <input type="hidden" th:field="*{id}" />
-
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label for="nome" class="form-label">Nome Completo</label>
-                                <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="rs" class="form-label">RS (Registro do Servidor)</label>
-                                <input type="text" class="form-control" id="rs" th:field="*{rs}" required>
+                            <div class="col-md-12">
+                                <label for="nome" class="form-label fw-bold">Nome Completo</label>
+                                <input type="text" class="form-control" id="nome" th:field="*{nome}" required placeholder="Ex: João da Silva">
                             </div>
 
                             <div class="col-md-6">
-                                <label for="cargo" class="form-label">Cargo</label>
-                                <input type="text" class="form-control" id="cargo" th:field="*{cargo}">
+                                <label for="rs" class="form-label fw-bold">Número RS</label>
+                                <input type="text" class="form-control" id="rs" th:field="*{rs}" required placeholder="Ex: 1234567">
                             </div>
-                            <div class="col-md-3">
-                                <label for="pv" class="form-label">PV (Posto de Vínculo)</label>
-                                <input type="text" class="form-control" id="pv" th:field="*{pv}">
+
+                            <div class="col-md-6">
+                                <label for="pv" class="form-label fw-bold">PV</label>
+                                <input type="number" class="form-control" id="pv" th:field="*{pv}" required placeholder="Ex: 1">
                             </div>
-                            <div class="col-md-3">
-                                <label for="regimeJuridico" class="form-label">Regime Jurídico</label>
-                                <select id="regimeJuridico" class="form-select" th:field="*{regimeJuridico}">
-                                    <option value="">Selecione...</option>
+
+                            <div class="col-md-6">
+                                <label for="cargo" class="form-label fw-bold">Cargo</label>
+                                <input type="text" class="form-control" id="cargo" th:field="*{cargo}" required placeholder="Ex: Analista">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="regimeJuridico" class="form-label fw-bold">Regime Jurídico</label>
+                                <select class="form-select" id="regimeJuridico" th:field="*{regimeJuridico}" required>
+                                    <option value="" disabled selected>Selecione...</option>
                                     <option value="Estatutário">Estatutário</option>
                                     <option value="CLT">CLT</option>
                                     <option value="Comissionado">Comissionado</option>
-                                    <option value="Outro">Outro</option>
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="cpf" class="form-label">CPF</label>
-                                <input type="text" class="form-control" id="cpf" th:field="*{cpf}">
+                            <div class="col-12 mt-4 text-end">
+                                <a href="/funcionarios/lista" class="btn btn-light border shadow-sm me-2">
+                                    <i class="fas fa-times me-1"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary shadow-sm px-4">
+                                    <i class="fas fa-save me-1"></i> Salvar
+                                </button>
                             </div>
-
-                            <div class="col-md-6">
-                                <label for="dataAdmissao" class="form-label">Data de Admissão</label>
-                                <input type="date" class="form-control" id="dataAdmissao" th:field="*{dataAdmissao}">
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-end">
-                            <a th:href="@{/funcionarios}" class="btn btn-outline-secondary me-2">
-                                <span data-feather="x"></span>
-                                Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <span data-feather="save"></span>
-                                Salvar
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-
-        </main>
-    </div>
-</div>
-
-<div th:replace="~{fragments/base/footer :: footer}"></div>
-
+        </div>
+    </section>
 </body>
 </html>

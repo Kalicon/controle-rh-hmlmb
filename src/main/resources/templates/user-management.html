@@ -1,101 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Usuários</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 0; }
-        .container { padding: 20px; max-width: 1200px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #0056b3; margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; font-weight: bold; }
-        .actions { display: flex; gap: 10px; }
-        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background-color: #0056b3; color: white; }
-        .btn-primary:hover { background-color: #004494; }
-        .btn-danger { background-color: #dc3545; color: white; }
-        .btn-danger:hover { background-color: #c82333; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="password"] { width: calc(100% - 24px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .alert { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; }
-        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
-        .alert-danger { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
-    </style>
+    <title>Gerenciamento de Usuários</title>
 </head>
 <body>
+    <section>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom-danger border-bottom border-3">
+                <h6 class="m-0 font-weight-bold text-danger"><i class="fas fa-users-cog me-2"></i>Controle de Acesso e Permissões</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger shadow-sm">
+                    <i class="fas fa-shield-alt fa-sm"></i> Auditoria
+                </button>
+            </div>
+            <div class="card-body">
 
-<div class="container">
-    <h1>Gestão de Usuários</h1>
+                <div class="alert alert-danger d-flex align-items-center mb-4 shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1 fw-bold">Área Restrita (Acesso MASTER)</h6>
+                        <small class="mb-0">Aqui você aprova novos registros e define quem pode acessar as funcionalidades do sistema de RH.</small>
+                    </div>
+                </div>
 
-    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+                <div class="table-responsive mt-2">
+                    <table class="table table-hover table-bordered align-middle" width="100%" cellspacing="0">
+                        <thead class="table-light text-muted">
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Nível de Acesso (Roles)</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center" style="width: 150px;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Exemplo de Linha de Usuário Master -->
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-2 d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px;">
+                                            <i class="fas fa-user-shield"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold text-dark">admin</span>
+                                            <br>
+                                            <small class="text-muted">Administrador do Sistema</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger mb-1"><i class="fas fa-key me-1"></i> MASTER</span>
+                                    <span class="badge bg-secondary mb-1"><i class="fas fa-user me-1"></i> USER</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success bg-opacity-25 text-success border border-success"><i class="fas fa-check me-1"></i> Ativo</span>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-secondary me-1" title="Editar" disabled>
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Usuário</th>
-                <th>Roles</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.id}">1</td>
-                <td>
-                    <span th:text="${user.username}">admin</span>
-                    <!-- Formulário de Edição (oculto por padrão, pode ser exibido com JS) -->
-                    <form th:action="@{/users/{id}/update(id=${user.id})}" method="post" style="display: none;" th:id="'editForm-' + ${user.id}">
-                        <div class="form-group">
-                            <label for="username">Novo Usuário:</label>
-                            <input type="text" id="username" name="username" th:value="${user.username}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Nova Senha (deixe em branco para não alterar):</label>
-                            <input type="password" id="password" name="password">
-                        </div>
-                        <div class="form-group">
-                            <label>Roles:</label>
-                            <div>
-                                <input type="checkbox" th:id="'roleAdmin-' + ${user.id}" name="roles" value="ROLE_ADMIN" th:checked="${user.roles.?[name == 'ROLE_ADMIN'].size() > 0}">
-                                <label th:for="'roleAdmin-' + ${user.id}">ADMIN</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" th:id="'roleUser-' + ${user.id}" name="roles" value="ROLE_USER" th:checked="${user.roles.?[name == 'ROLE_USER'].size() > 0}">
-                                <label th:for="'roleUser-' + ${user.id}">USER</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                        <button type="button" class="btn btn-secondary" th:onclick="|toggleEditForm(${user.id})|">Cancelar</button>
-                    </form>
-                </td>
-                <td>
-                    <span th:each="role, iterStat : ${user.roles}" th:text="${role.name} + (${iterStat.last} ? '' : ', ')">ROLE_ADMIN</span>
-                </td>
-                <td class="actions">
-                    <button type="button" class="btn btn-primary" th:onclick="|toggleEditForm(${user.id})|">Editar</button>
-                    <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
-                        <button type="submit" class="btn btn-danger">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<script>
-    function toggleEditForm(userId) {
-        var form = document.getElementById('editForm-' + userId);
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-        } else {
-            form.style.display = 'none';
-        }
-    }
-</script>
-
+                            <!-- Placeholder para quando integrar a API real de listar usuários -->
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted bg-light border-0">
+                                    <i class="fas fa-cogs fa-3x mb-3 opacity-25"></i>
+                                    <p class="mb-0 fs-5">Tabela em construção.</p>
+                                    <small>No futuro, todos os usuários registrados no banco aparecerão aqui.</small>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

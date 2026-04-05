@@ -20,6 +20,11 @@ public class DashboardController {
     public String getDashboard(Model model) {
         Map<String, Object> dashboardData = dashboardService.getDashboardData();
         model.addAllAttributes(dashboardData);
+        
+        // Adiciona as variáveis para o novo layout
+        model.addAttribute("pageTitle", "Dashboard");
+        model.addAttribute("activePage", "dashboard");
+
         return "dashboard";
     }
 }
