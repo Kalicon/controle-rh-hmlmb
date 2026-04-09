@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.time.LocalDate; // Importar LocalDate
+import java.time.ZoneId; // Importar ZoneId
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -46,6 +48,7 @@ public class CargaService {
                         funcionario.setPv(getIntegerValue(row.getCell(2)));
                         funcionario.setCargo(getStringValue(row.getCell(3)));
                         funcionario.setRegimeJuridico(getStringValue(row.getCell(4)));
+                        funcionario.setDataEntrada(getLocalDateValue(row.getCell(5))); // Novo campo adicionado
                         funcionarioRepository.save(funcionario);
                     }
                 }
@@ -73,6 +76,26 @@ public class CargaService {
         }
         if (cell.getCellType() == CellType.NUMERIC) {
             return (int) cell.getNumericCellValue();
+        }
+        return null;
+    }
+
+    // Novo método para obter valor de data
+    private LocalDate getLocalDateValue(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        if (cell.getCellType() == CellType.NUMERIC) {
+            // Apache POI armazena datas como números (dias desde 1900)
+            return cell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        } else if (cell.getCellType() == CellType.STRING) {
+            // Tenta parsear a string como data, se for o caso
+            try {
+                return LocalDate.parse(cell.getStringCellValue()); // Assumindo formato ISO_LOCAL_DATE (YYYY-MM-DD)
+            } catch (Exception e) {
+                // Logar ou tratar erro de parse, se necessário
+                return null;
+            }
         }
         return null;
     }

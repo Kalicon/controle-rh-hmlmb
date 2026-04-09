@@ -1,185 +1,215 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::.content-wrapper}, ~{::script})}">
 <head>
-    <title th:text="${requerimento.id == null ? 'Novo Requerimento' : 'Editar Requerimento'}"></title>
+    <title th:text="${requerimento.id == null} ? 'Novo Requerimento' : 'Editar Requerimento'"></title>
 </head>
 <body>
-    <section>
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-
-                <div class="card shadow-sm border-0 mb-4" th:if="${requerimento.id == null}">
-                    <div class="card-header bg-white py-3 d-flex align-items-center">
-                        <i class="fas fa-magic text-warning me-2"></i>
-                        <h6 class="m-0 font-weight-bold text-dark">Preenchimento Inteligente (Upload de PDF)</h6>
-                    </div>
-                    <div class="card-body p-4 bg-light">
-                        <p class="text-muted small mb-3">Selecione o arquivo PDF do requerimento para que o sistema extraia os dados e preencha o formulário abaixo automaticamente.</p>
-                        <div class="input-group mb-2 shadow-sm">
-                            <input type="file" class="form-control" id="pdfFile" accept=".pdf">
-                            <button class="btn btn-warning fw-bold text-dark px-4" type="button" id="uploadButton">
-                                <i class="fas fa-file-import me-1"></i> Extrair Dados
-                            </button>
-                        </div>
-                        <div id="uploadStatus"></div>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i th:class="${requerimento.id == null ? 'fas fa-file-signature me-2' : 'fas fa-edit me-2'}"></i>
-                            <span th:text="${requerimento.id == null ? 'Dados do Requerimento' : 'Edição de Requerimento'}"></span>
-                        </h6>
-                    </div>
-                    <div class="card-body p-4">
-                        <form th:action="@{/requerimentos}" th:object="${requerimento}" method="post" id="requerimentoForm" class="row g-3">
-                            <input type="hidden" th:field="*{id}" />
-
-                            <datalist id="servidoresList"></datalist>
-
-                            <div class="col-md-12">
-                                <label for="nome" class="form-label fw-bold text-secondary">Servidor Requerente</label>
-                                <input type="text" class="form-control form-control-lg" id="nome" th:field="*{nome}" list="servidoresList" autocomplete="off" required placeholder="Digite o nome para buscar...">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label for="rs" class="form-label fw-bold">Número RS</label>
-                                <input type="text" class="form-control" id="rs" th:field="*{rs}" placeholder="Ex: 1234567">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label for="cargo" class="form-label fw-bold">Cargo</label>
-                                <input type="text" class="form-control" id="cargo" th:field="*{cargo}">
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="pv" class="form-label fw-bold">PV</label>
-                                <input type="number" class="form-control" id="pv" th:field="*{pv}">
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="regimeJuridico" class="form-label fw-bold">Regime</label>
-                                <input type="text" class="form-control" id="regimeJuridico" th:field="*{regimeJuridico}">
-                            </div>
-
-                            <hr class="my-4 text-muted">
-
-                            <div class="col-md-3">
-                                <label for="exercicio" class="form-label fw-bold">Exercício (Ano)</label>
-                                <input type="number" class="form-control" id="exercicio" th:field="*{exercicio}" required>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="quantidadeDias" class="form-label fw-bold">Qtd. Dias</label>
-                                <input type="number" class="form-control" id="quantidadeDias" th:field="*{quantidadeDias}" placeholder="Ex: 30">
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="dataInicio" class="form-label fw-bold">Data de Início</label>
-                                <input type="date" class="form-control" id="dataInicio" th:field="*{dataInicio}">
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="dataEntrada" class="form-label fw-bold">Data de Entrada</label>
-                                <input type="date" class="form-control" id="dataEntrada" th:field="*{dataEntrada}">
-                            </div>
-
-                            <div class="col-12 mt-3">
-                                <label for="observacoes" class="form-label fw-bold">Observações / Detalhes</label>
-                                <textarea class="form-control" id="observacoes" th:field="*{observacoes}" rows="3" placeholder="Detalhes adicionais sobre o requerimento..."></textarea>
-                            </div>
-
-                            <div class="col-12 mt-4 text-end">
-                                <a th:href="@{/requerimentos/lista}" class="btn btn-light border shadow-sm me-2">
-                                    <i class="fas fa-times me-1"></i> Cancelar
-                                </a>
-                                <button type="submit" class="btn btn-primary shadow-sm px-4">
-                                    <i class="fas fa-save me-1"></i> Salvar Requerimento
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 th:text="${requerimento.id == null} ? 'Novo Requerimento' : 'Editar Requerimento'"></h1>
                 </div>
             </div>
         </div>
     </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const uploadButton = document.getElementById('uploadButton');
-            if(uploadButton) {
-                const pdfFile = document.getElementById('pdfFile');
-                const uploadStatus = document.getElementById('uploadStatus');
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Dados do Requerimento</h3>
+                </div>
+                <form th:action="@{/requerimentos}" th:object="${requerimento}" method="post" id="requerimentoForm">
+                    <div class="card-body">
+                        <!-- Campos do Funcionário -->
+                        <div class="form-group">
+                            <label for="funcionarioNome">Nome do Funcionário</label>
+                            <input list="funcionariosList" id="funcionarioNome" name="nome" th:value="*{nome}" class="form-control" required autocomplete="off">
+                            <datalist id="funcionariosList"></datalist>
+                        </div>
 
-                uploadButton.addEventListener('click', function () {
-                    if (pdfFile.files.length === 0) {
-                        uploadStatus.innerHTML = '<div class="alert alert-warning mt-2 mb-0 py-2"><i class="fas fa-exclamation-triangle me-2"></i>Por favor, selecione um arquivo.</div>';
-                        return;
-                    }
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="rs">RS</label>
+                                    <input type="text" id="rs" th:field="*{rs}" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="pv">PV</label>
+                                    <input type="number" id="pv" th:field="*{pv}" class="form-control" readonly>
+                                </div>
+                            </div>
+                             <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="dataEntrada">Data de Entrada</label>
+                                    <input type="date" id="dataEntrada" class="form-control" readonly>
+                                </div>
+                            </div>
+                             <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="exercicio">Exercício</label>
+                                    <input type="number" id="exercicio" th:field="*{exercicio}" class="form-control">
+                                </div>
+                            </div>
+                        </div>
 
-                    const formData = new FormData();
-                    formData.append('pdfFile', pdfFile.files[0]);
+                        <hr>
 
-                    uploadStatus.innerHTML = `<div class="alert alert-info mt-2 mb-0 py-2 d-flex align-items-center" role="alert">
-                                                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                                                <span>Enviando e processando o arquivo via IA...</span>
-                                              </div>`;
+                        <!-- Campos do Requerimento -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="dataInicio">Data de Início</label>
+                                    <input type="date" id="dataInicio" th:field="*{dataInicio}" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="quantidadeDias">Quantidade de Dias</label>
+                                    <input type="number" id="quantidadeDias" th:field="*{quantidadeDias}" class="form-control" required min="1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="dataTermino">Data de Término</label>
+                                    <input type="date" id="dataTermino" th:field="*{dataTermino}" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
 
-                    fetch('/requerimentos/upload-pdf', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => { throw new Error(err.erro || 'Falha no processamento.'); });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        uploadStatus.innerHTML = '<div class="alert alert-success mt-2 mb-0 py-2"><i class="fas fa-check-circle me-2"></i>Dados extraídos com sucesso! Revise os campos abaixo.</div>';
+                        <div class="form-group">
+                            <label for="observacoes">Observações</label>
+                            <textarea id="observacoes" th:field="*{observacoes}" class="form-control" rows="3"></textarea>
+                        </div>
 
-                        Object.keys(data).forEach(key => {
-                            const input = document.getElementById(key);
-                            if (input) {
-                                input.value = data[key] || '';
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        uploadStatus.innerHTML = `<div class="alert alert-danger mt-2 mb-0 py-2"><i class="fas fa-times-circle me-2"></i>Erro: ${error.message}</div>`;
-                    });
-                });
-            }
+                        <!-- Campos ocultos para dados não visíveis -->
+                        <input type="hidden" id="cargo" th:field="*{cargo}">
+                        <input type="hidden" id="regimeJuridico" th:field="*{regimeJuridico}">
+                        <input type="hidden" th:field="*{id}">
 
-            const nomeInput = document.getElementById('nome');
-            const servidoresDatalist = document.getElementById('servidoresList');
-            let servidoresData = [];
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <a th:href="@{/requerimentos/lista}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
 
-            fetch('/requerimentos/api/servidores')
-                .then(response => response.json())
-                .then(data => {
-                    servidoresData = data;
-                    data.forEach(servidor => {
-                        const option = document.createElement('option');
-                        option.value = servidor.nome;
-                        servidoresDatalist.appendChild(option);
-                    });
-                });
+<script th:fragment="script">
+document.addEventListener('DOMContentLoaded', function () {
+    const funcionarioNomeInput = document.getElementById('funcionarioNome');
+    const funcionariosList = document.getElementById('funcionariosList');
+    const dataInicioInput = document.getElementById('dataInicio');
+    const quantidadeDiasInput = document.getElementById('quantidadeDias');
+    const dataTerminoInput = document.getElementById('dataTermino');
+    const exercicioInput = document.getElementById('exercicio');
+    const form = document.getElementById('requerimentoForm');
 
-            nomeInput.addEventListener('input', function(e) {
-                const selectedNome = e.target.value;
-                const selectedServidor = servidoresData.find(s => s.nome === selectedNome);
+    let funcionarios = [];
 
-                if (selectedServidor) {
-                    document.getElementById('cargo').value = selectedServidor.cargo || '';
-                    document.getElementById('rs').value = selectedServidor.rs || '';
-                    document.getElementById('pv').value = selectedServidor.pv || '';
-                    document.getElementById('regimeJuridico').value = selectedServidor.regimeJuridico || '';
-                }
+    // 1. Carregar a lista de funcionários para o autocomplete
+    fetch('/requerimentos/api/servidores')
+        .then(response => response.json())
+        .then(data => {
+            funcionarios = data;
+            funcionarios.forEach(func => {
+                const option = document.createElement('option');
+                option.value = func.nome;
+                option.dataset.rs = func.rs;
+                funcionariosList.appendChild(option);
             });
         });
-    </script>
+
+    // 2. Pré-preencher dados quando um funcionário é selecionado
+    funcionarioNomeInput.addEventListener('change', function() {
+        const selectedNome = this.value;
+        const selectedFunc = funcionarios.find(f => f.nome === selectedNome);
+
+        if (selectedFunc && selectedFunc.rs) {
+            fetch(`/funcionarios/api/buscarPorRs?rs=${selectedFunc.rs}`)
+                .then(response => response.json())
+                .then(funcionarioCompleto => {
+                    document.getElementById('rs').value = funcionarioCompleto.rs || '';
+                    document.getElementById('pv').value = funcionarioCompleto.pv || '';
+                    document.getElementById('cargo').value = funcionarioCompleto.cargo || '';
+                    document.getElementById('regimeJuridico').value = funcionarioCompleto.regimeJuridico || '';
+
+                    const dataEntrada = funcionarioCompleto.dataEntrada ? funcionarioCompleto.dataEntrada.split('T')[0] : '';
+                    document.getElementById('dataEntrada').value = dataEntrada;
+
+                    // Preenche o ano do exercício com o ano atual
+                    if (!exercicioInput.value) {
+                        exercicioInput.value = new Date().getFullYear();
+                    }
+                });
+        }
+    });
+
+    // 3. Calcular a data de término automaticamente
+    function calcularDataTermino() {
+        const dataInicio = dataInicioInput.value;
+        const dias = parseInt(quantidadeDiasInput.value, 10);
+
+        if (dataInicio && dias > 0) {
+            const data = new Date(dataInicio + 'T00:00:00'); // Evita problemas de fuso
+            data.setDate(data.getDate() + dias - 1); // -1 porque o dia de início já conta
+
+            const ano = data.getFullYear();
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const dia = String(data.getDate()).padStart(2, '0');
+
+            dataTerminoInput.value = `${ano}-${mes}-${dia}`;
+        } else {
+            dataTerminoInput.value = '';
+        }
+    }
+
+    dataInicioInput.addEventListener('change', calcularDataTermino);
+    quantidadeDiasInput.addEventListener('input', calcularDataTermino);
+
+    // Calcula na carga da página caso os campos já estejam preenchidos (edição)
+    calcularDataTermino();
+
+    // 4. Interceptar o submit para a pergunta "Incluir mais algum?"
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Impede o envio padrão do formulário
+
+        const formData = new FormData(form);
+        const action = form.getAttribute('action');
+
+        fetch(action, {
+            method: 'POST',
+            body: new URLSearchParams(formData) // Envia como form-urlencoded, como o Spring espera
+        })
+        .then(response => {
+            if (response.ok) {
+                // A URL de redirect vem no corpo da resposta se o servidor fizer o redirect
+                if (confirm('Requerimento salvo com sucesso! Deseja adicionar outro?')) {
+                    form.reset(); // Limpa o formulário
+                    funcionarioNomeInput.focus(); // Foca no primeiro campo
+                } else {
+                    // Redireciona para a lista
+                    window.location.href = '/requerimentos/lista';
+                }
+            } else {
+                alert('Ocorreu um erro ao salvar o requerimento.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro de rede ao salvar o requerimento.');
+        });
+    });
+});
+</script>
+
 </body>
 </html>

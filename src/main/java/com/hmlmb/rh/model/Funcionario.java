@@ -2,6 +2,7 @@ package com.hmlmb.rh.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDate; // Importar LocalDate
 
 @Entity
 @Data
@@ -22,4 +23,6 @@ public class Funcionario {
     private String cargo;
 
     private String regimeJuridico;
+
+    private LocalDate dataEntrada; // Novo campo adicionado
 }

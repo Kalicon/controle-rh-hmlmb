@@ -22,5 +22,6 @@ public class RequerimentoDTO {
     private String regimeJuridico; 
     private LocalDate dataInicio;
     private Integer quantidadeDias;
+    private LocalDate dataTermino; // Novo campo adicionado
     private String observacoes;
 }

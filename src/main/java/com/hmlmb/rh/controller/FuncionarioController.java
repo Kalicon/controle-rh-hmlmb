@@ -20,25 +20,19 @@ public class FuncionarioController {
         this.service = service;
     }
 
-    @GetMapping("/lista") // <-- CORREÇÃO: Mapeamento explícito para /lista
+    @GetMapping("/lista")
     public String listarFuncionarios(Model model) {
         model.addAttribute("funcionarios", service.listarTodos());
-        
-        // Adiciona as variáveis para o novo layout
         model.addAttribute("pageTitle", "Lista de Funcionários");
         model.addAttribute("activePage", "func_lista");
-
         return "funcionarios/lista";
     }
 
-    @GetMapping("/formulario") // <-- CORREÇÃO: Mapeamento explícito para /formulario
+    @GetMapping("/formulario")
     public String exibirFormulario(Model model) {
         model.addAttribute("funcionario", new Funcionario());
-        
-        // Adiciona as variáveis para o novo layout
         model.addAttribute("pageTitle", "Novo Funcionário");
         model.addAttribute("activePage", "func_form");
-
         return "funcionarios/formulario";
     }
 
@@ -47,26 +41,23 @@ public class FuncionarioController {
         Optional<Funcionario> funcionario = service.buscarPorId(id);
         if (funcionario.isPresent()) {
             model.addAttribute("funcionario", funcionario.get());
-            
-            // Adiciona as variáveis para o novo layout
             model.addAttribute("pageTitle", "Editar Funcionário");
-            model.addAttribute("activePage", "func_form"); // Mesma aba ativa no menu
-
+            model.addAttribute("activePage", "func_form");
             return "funcionarios/formulario";
         }
-        return "redirect:/funcionarios/lista"; // <-- CORREÇÃO
+        return "redirect:/funcionarios/lista";
     }
 
     @PostMapping
     public String salvarFuncionario(@ModelAttribute Funcionario funcionario) {
         service.salvar(funcionario);
-        return "redirect:/funcionarios/lista"; // <-- CORREÇÃO
+        return "redirect:/funcionarios/lista";
     }
 
     @GetMapping("/deletar/{id}")
     public String deletarFuncionario(@PathVariable Long id) {
         service.deletar(id);
-        return "redirect:/funcionarios/lista"; // <-- CORREÇÃO
+        return "redirect:/funcionarios/lista";
     }
 
     // Endpoint para o Autocomplete (API)
@@ -74,5 +65,13 @@ public class FuncionarioController {
     @ResponseBody
     public List<Funcionario> buscarFuncionariosApi(@RequestParam String termo) {
         return service.buscarPorNome(termo);
+    }
+
+    // Novo endpoint para buscar funcionário por RS para pré-preenchimento
+    @GetMapping("/api/buscarPorRs")
+    @ResponseBody
+    public ResponseEntity<Funcionario> buscarFuncionarioPorRs(@RequestParam String rs) {
+        Optional<Funcionario> funcionario = service.buscarPorRs(rs);
+        return funcionario.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
