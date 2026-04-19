@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(~{::title}, ~{::.content-wrapper}, ~{::script})}">
+      th:replace="~{layout :: layout(~{::title}, ~{::.content-wrapper})}">
 <head>
     <title th:text="${requerimento.id == null} ? 'Novo Requerimento' : 'Editar Requerimento'"></title>
 </head>
@@ -24,10 +24,10 @@
                 </div>
                 <form th:action="@{/requerimentos}" th:object="${requerimento}" method="post" id="requerimentoForm">
                     <div class="card-body">
-                        <!-- Campos do Funcionário -->
+
                         <div class="form-group">
-                            <label for="funcionarioNome">Nome do Funcionário</label>
-                            <input list="funcionariosList" id="funcionarioNome" name="nome" th:value="*{nome}" class="form-control" required autocomplete="off">
+                            <label for="funcionarioNome">Nome do Funcionário (Digite para buscar)</label>
+                            <input list="funcionariosList" id="funcionarioNome" name="nome" th:value="*{nome}" class="form-control" required autocomplete="off" placeholder="Comece a digitar o nome...">
                             <datalist id="funcionariosList"></datalist>
                         </div>
 
@@ -35,181 +35,181 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="rs">RS</label>
-                                    <input type="text" id="rs" th:field="*{rs}" class="form-control" readonly>
+                                    <input type="text" id="rs" th:field="*{rs}" class="form-control" readonly tabindex="-1">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="pv">PV</label>
-                                    <input type="number" id="pv" th:field="*{pv}" class="form-control" readonly>
+                                    <input type="number" id="pv" th:field="*{pv}" class="form-control" readonly tabindex="-1">
                                 </div>
                             </div>
                              <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="dataEntrada">Data de Entrada</label>
-                                    <input type="date" id="dataEntrada" class="form-control" readonly>
+                                    <input type="date" id="dataEntrada" th:field="*{dataEntrada}" class="form-control" readonly tabindex="-1">
                                 </div>
                             </div>
                              <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="exercicio">Exercício</label>
-                                    <input type="number" id="exercicio" th:field="*{exercicio}" class="form-control">
+                                    <input type="number" id="exercicio" th:field="*{exercicio}" class="form-control" readonly tabindex="-1">
                                 </div>
                             </div>
                         </div>
 
                         <hr>
 
-                        <!-- Campos do Requerimento -->
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="dataInicio">Data de Início</label>
-                                    <input type="date" id="dataInicio" th:field="*{dataInicio}" class="form-control" required>
+                                    <input type="date" id="dataInicio" th:field="*{dataInicio}" class="form-control" required tabindex="1">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="quantidadeDias">Quantidade de Dias</label>
-                                    <input type="number" id="quantidadeDias" th:field="*{quantidadeDias}" class="form-control" required min="1">
+                                    <input type="number" id="quantidadeDias" th:field="*{quantidadeDias}" class="form-control" required min="1" tabindex="2">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="dataTermino">Data de Término</label>
-                                    <input type="date" id="dataTermino" th:field="*{dataTermino}" class="form-control" readonly>
+                                    <input type="date" id="dataTermino" th:field="*{dataTermino}" class="form-control" readonly tabindex="-1">
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="observacoes">Observações</label>
-                            <textarea id="observacoes" th:field="*{observacoes}" class="form-control" rows="3"></textarea>
+                            <textarea id="observacoes" th:field="*{observacoes}" class="form-control" rows="3" tabindex="3"></textarea>
                         </div>
 
-                        <!-- Campos ocultos para dados não visíveis -->
                         <input type="hidden" id="cargo" th:field="*{cargo}">
                         <input type="hidden" id="regimeJuridico" th:field="*{regimeJuridico}">
                         <input type="hidden" th:field="*{id}">
 
                     </div>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                        <a th:href="@{/requerimentos/lista}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary" tabindex="4">Salvar Requerimento</button>
+                        <a th:href="@{/requerimentos/lista}" class="btn btn-secondary" tabindex="5">Cancelar</a>
                     </div>
                 </form>
             </div>
         </div>
     </section>
-</div>
 
-<script th:fragment="script">
-document.addEventListener('DOMContentLoaded', function () {
-    const funcionarioNomeInput = document.getElementById('funcionarioNome');
-    const funcionariosList = document.getElementById('funcionariosList');
-    const dataInicioInput = document.getElementById('dataInicio');
-    const quantidadeDiasInput = document.getElementById('quantidadeDias');
-    const dataTerminoInput = document.getElementById('dataTermino');
-    const exercicioInput = document.getElementById('exercicio');
-    const form = document.getElementById('requerimentoForm');
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputNome = document.getElementById('funcionarioNome');
+        const datalist = document.getElementById('funcionariosList');
 
-    let funcionarios = [];
+        const inputRs = document.getElementById('rs');
+        const inputPv = document.getElementById('pv');
+        const inputCargo = document.getElementById('cargo');
+        const inputRegime = document.getElementById('regimeJuridico');
 
-    // 1. Carregar a lista de funcionários para o autocomplete
-    fetch('/requerimentos/api/servidores')
-        .then(response => response.json())
-        .then(data => {
-            funcionarios = data;
-            funcionarios.forEach(func => {
-                const option = document.createElement('option');
-                option.value = func.nome;
-                option.dataset.rs = func.rs;
-                funcionariosList.appendChild(option);
+        const dataInicioInput = document.getElementById('dataInicio');
+        const quantidadeDiasInput = document.getElementById('quantidadeDias');
+        const dataTerminoInput = document.getElementById('dataTermino');
+        const exercicioInput = document.getElementById('exercicio');
+        const dataEntradaInput = document.getElementById('dataEntrada');
+        const form = document.getElementById('requerimentoForm');
+
+        let todosFuncionarios = [];
+
+        function setDatasPadrao() {
+            if (!exercicioInput.value) {
+                exercicioInput.value = new Date().getFullYear();
+            }
+            if (!dataEntradaInput.value) {
+                dataEntradaInput.value = new Date().toISOString().split('T')[0];
+            }
+        }
+        setDatasPadrao();
+
+        fetch('/requerimentos/api/servidores')
+            .then(response => response.json())
+            .then(data => {
+                todosFuncionarios = data;
+                data.forEach(func => {
+                    const option = document.createElement('option');
+                    option.value = func.nome;
+                    datalist.appendChild(option);
+                });
+            })
+            .catch(err => console.error("Erro ao carregar lista de funcionários:", err));
+
+        inputNome.addEventListener('input', function() {
+            const nomeDigitado = this.value;
+            const funcionarioEncontrado = todosFuncionarios.find(f => f.nome === nomeDigitado);
+
+            if (funcionarioEncontrado) {
+                inputRs.value = funcionarioEncontrado.rs || '';
+                inputPv.value = funcionarioEncontrado.pv || '';
+                inputCargo.value = funcionarioEncontrado.cargo || '';
+                inputRegime.value = funcionarioEncontrado.regimeJuridico || '';
+                dataInicioInput.focus();
+            } else {
+                inputRs.value = '';
+                inputPv.value = '';
+                inputCargo.value = '';
+                inputRegime.value = '';
+            }
+        });
+
+        function calcularDataTermino() {
+            const dataInicio = dataInicioInput.value;
+            const dias = parseInt(quantidadeDiasInput.value, 10);
+
+            if (dataInicio && dias > 0) {
+                const data = new Date(dataInicio + 'T00:00:00');
+                data.setDate(data.getDate() + dias - 1);
+
+                const ano = data.getFullYear();
+                const mes = String(data.getMonth() + 1).padStart(2, '0');
+                const dia = String(data.getDate()).padStart(2, '0');
+
+                dataTerminoInput.value = `${ano}-${mes}-${dia}`;
+            } else {
+                dataTerminoInput.value = '';
+            }
+        }
+
+        dataInicioInput.addEventListener('change', calcularDataTermino);
+        quantidadeDiasInput.addEventListener('input', calcularDataTermino);
+        calcularDataTermino();
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            // Como o formulário é um POST padrão, o Thymeleaf já injeta o _csrf no FormData.
+            // Não precisamos de cabeçalho extra aqui.
+            fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    if (confirm('Requerimento salvo com sucesso! Deseja adicionar outro?')) {
+                        form.reset();
+                        setDatasPadrao();
+                        inputNome.focus();
+                    } else {
+                        window.location.href = '/requerimentos/lista';
+                    }
+                } else {
+                    alert('Ocorreu um erro ao salvar o requerimento.');
+                }
+            })
+            .catch(error => {
+                alert('Ocorreu um erro de rede ao salvar o requerimento.');
             });
         });
-
-    // 2. Pré-preencher dados quando um funcionário é selecionado
-    funcionarioNomeInput.addEventListener('change', function() {
-        const selectedNome = this.value;
-        const selectedFunc = funcionarios.find(f => f.nome === selectedNome);
-
-        if (selectedFunc && selectedFunc.rs) {
-            fetch(`/funcionarios/api/buscarPorRs?rs=${selectedFunc.rs}`)
-                .then(response => response.json())
-                .then(funcionarioCompleto => {
-                    document.getElementById('rs').value = funcionarioCompleto.rs || '';
-                    document.getElementById('pv').value = funcionarioCompleto.pv || '';
-                    document.getElementById('cargo').value = funcionarioCompleto.cargo || '';
-                    document.getElementById('regimeJuridico').value = funcionarioCompleto.regimeJuridico || '';
-
-                    const dataEntrada = funcionarioCompleto.dataEntrada ? funcionarioCompleto.dataEntrada.split('T')[0] : '';
-                    document.getElementById('dataEntrada').value = dataEntrada;
-
-                    // Preenche o ano do exercício com o ano atual
-                    if (!exercicioInput.value) {
-                        exercicioInput.value = new Date().getFullYear();
-                    }
-                });
-        }
     });
-
-    // 3. Calcular a data de término automaticamente
-    function calcularDataTermino() {
-        const dataInicio = dataInicioInput.value;
-        const dias = parseInt(quantidadeDiasInput.value, 10);
-
-        if (dataInicio && dias > 0) {
-            const data = new Date(dataInicio + 'T00:00:00'); // Evita problemas de fuso
-            data.setDate(data.getDate() + dias - 1); // -1 porque o dia de início já conta
-
-            const ano = data.getFullYear();
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const dia = String(data.getDate()).padStart(2, '0');
-
-            dataTerminoInput.value = `${ano}-${mes}-${dia}`;
-        } else {
-            dataTerminoInput.value = '';
-        }
-    }
-
-    dataInicioInput.addEventListener('change', calcularDataTermino);
-    quantidadeDiasInput.addEventListener('input', calcularDataTermino);
-
-    // Calcula na carga da página caso os campos já estejam preenchidos (edição)
-    calcularDataTermino();
-
-    // 4. Interceptar o submit para a pergunta "Incluir mais algum?"
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Impede o envio padrão do formulário
-
-        const formData = new FormData(form);
-        const action = form.getAttribute('action');
-
-        fetch(action, {
-            method: 'POST',
-            body: new URLSearchParams(formData) // Envia como form-urlencoded, como o Spring espera
-        })
-        .then(response => {
-            if (response.ok) {
-                // A URL de redirect vem no corpo da resposta se o servidor fizer o redirect
-                if (confirm('Requerimento salvo com sucesso! Deseja adicionar outro?')) {
-                    form.reset(); // Limpa o formulário
-                    funcionarioNomeInput.focus(); // Foca no primeiro campo
-                } else {
-                    // Redireciona para a lista
-                    window.location.href = '/requerimentos/lista';
-                }
-            } else {
-                alert('Ocorreu um erro ao salvar o requerimento.');
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Ocorreu um erro de rede ao salvar o requerimento.');
-        });
-    });
-});
-</script>
-
+    </script>
+</div>
 </body>
 </html>

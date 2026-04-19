@@ -24,7 +24,27 @@ public class UserController {
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", userService.findAllUsers());
+        
+        // Adiciona as variáveis para o novo layout
+        model.addAttribute("pageTitle", "Gerenciamento de Usuários");
+        model.addAttribute("activePage", "admin_users");
+        
         return "user-management";
+    }
+
+    @PostMapping("/create")
+    public String createUser(@RequestParam String username,
+                             @RequestParam String password,
+                             @RequestParam Set<String> roles,
+                             @RequestParam(defaultValue = "false") boolean enabled,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            userService.createUser(username, password, roles, enabled);
+            redirectAttributes.addFlashAttribute("successMessage", "Usuário criado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar usuário: " + e.getMessage());
+        }
+        return "redirect:/users";
     }
 
     @PostMapping("/{id}/update")
@@ -32,9 +52,10 @@ public class UserController {
                              @RequestParam String username,
                              @RequestParam(required = false) String password,
                              @RequestParam Set<String> roles,
+                             @RequestParam(defaultValue = "false") boolean enabled,
                              RedirectAttributes redirectAttributes) {
         try {
-            userService.updateUser(id, username, password, roles);
+            userService.updateUser(id, username, password, roles, enabled);
             redirectAttributes.addFlashAttribute("successMessage", "Usuário atualizado com sucesso!");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Erro ao atualizar usuário: " + e.getMessage());

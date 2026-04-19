@@ -1,8 +1,10 @@
 package com.hmlmb.rh.controller;
 
 import com.hmlmb.rh.dto.RequerimentoDTO;
+import com.hmlmb.rh.model.Funcionario;
 import com.hmlmb.rh.model.Requerimento;
 import com.hmlmb.rh.repository.RequerimentoRepository;
+import com.hmlmb.rh.service.FuncionarioService;
 import com.hmlmb.rh.service.PythonIntegrationService;
 import com.hmlmb.rh.service.RequerimentoService;
 import org.springframework.http.ResponseEntity;
@@ -25,20 +27,25 @@ public class RequerimentoController {
 
     private final RequerimentoService service;
     private final PythonIntegrationService pythonIntegrationService;
-    private final RequerimentoRepository repository; // Injetado para o AutoComplete rápido
+    private final RequerimentoRepository repository;
+    private final FuncionarioService funcionarioService; // Adicionado para integrar com a base real de funcionários
 
     private static final String UPLOAD_DIR = "temp_uploads/";
 
-    public RequerimentoController(RequerimentoService service, PythonIntegrationService pythonIntegrationService, RequerimentoRepository repository) {
+    public RequerimentoController(RequerimentoService service, 
+                                  PythonIntegrationService pythonIntegrationService, 
+                                  RequerimentoRepository repository,
+                                  FuncionarioService funcionarioService) {
         this.service = service;
         this.pythonIntegrationService = pythonIntegrationService;
         this.repository = repository;
+        this.funcionarioService = funcionarioService;
     }
 
     /**
      * Lista requerimentos com base no ano do Exercício e no Mês.
      */
-    @GetMapping("/lista") // <-- CORREÇÃO: Mapeamento explícito para /lista
+    @GetMapping("/lista")
     public String listarRequerimentos(
             @RequestParam(name = "ano", required = false) Integer ano, 
             @RequestParam(name = "mes", required = false) Integer mes,
@@ -60,7 +67,7 @@ public class RequerimentoController {
         return "requerimentos/lista";
     }
 
-    @GetMapping("/formulario") // <-- CORREÇÃO: Mapeamento explícito para /formulario
+    @GetMapping("/formulario")
     public String exibirFormulario(Model model) {
         model.addAttribute("requerimento", new Requerimento());
         
@@ -79,7 +86,7 @@ public class RequerimentoController {
             
             // Adiciona as variáveis para o novo layout
             model.addAttribute("pageTitle", "Editar Requerimento");
-            model.addAttribute("activePage", "req_form"); // Mesma aba ativa no menu
+            model.addAttribute("activePage", "req_form");
 
             return "requerimentos/formulario";
         }
@@ -92,7 +99,7 @@ public class RequerimentoController {
         // Pega o mês que ele acabou de salvar para redirecionar certinho
         Integer mesSalvo = requerimento.getDataInicio() != null ? requerimento.getDataInicio().getMonthValue() : null;
         
-        String redirectUrl = "redirect:/requerimentos/lista?ano=" + requerimento.getExercicio(); // <-- CORREÇÃO: Redireciona para /lista
+        String redirectUrl = "redirect:/requerimentos/lista?ano=" + requerimento.getExercicio();
         if(mesSalvo != null){
             redirectUrl += "&mes=" + mesSalvo;
         }
@@ -106,24 +113,25 @@ public class RequerimentoController {
     }
 
     /**
-     * Endpoint API (JSON) para a tela consultar os nomes e dados (AutoComplete Datalist).
+     * Endpoint API (JSON) para a tela consultar os nomes e dados (AutoComplete Datalist / Select2).
+     * AGORA INTEGRADO 100% COM A BASE DE FUNCIONÁRIOS REAIS!
      */
     @GetMapping("/api/servidores")
     @ResponseBody
     public List<Map<String, String>> buscarServidoresCadastrados() {
-        List<Object[]> rawList = repository.findDistinctServidores();
+        // Busca todos os funcionários da base oficial (carregada via Excel ou formulário)
+        List<Funcionario> funcionarios = funcionarioService.listarTodos();
         List<Map<String, String>> result = new ArrayList<>();
         
-        for (Object[] obj : rawList) {
+        for (Funcionario f : funcionarios) {
             Map<String, String> map = new HashMap<>();
-            map.put("nome", (String) obj[0]);
-            map.put("cargo", (String) obj[1]);
-            map.put("rs", (String) obj[2]);
-            map.put("pv", obj[3] != null ? obj[3].toString() : "");
-            map.put("regimeJuridico", (String) obj[4]);
+            map.put("nome", f.getNome());
+            map.put("cargo", f.getCargo() != null ? f.getCargo() : "");
+            map.put("rs", f.getRs());
+            map.put("pv", f.getPv() != null ? f.getPv().toString() : "");
+            map.put("regimeJuridico", f.getRegimeJuridico() != null ? f.getRegimeJuridico() : "");
             
-            // Só adiciona se tiver nome
-            if(map.get("nome") != null && !map.get("nome").isEmpty()) {
+            if(f.getNome() != null && !f.getNome().isEmpty()) {
                 result.add(map);
             }
         }

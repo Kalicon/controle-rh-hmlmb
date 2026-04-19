@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::.content-wrapper})}">
+<head>
+    <title>Central de Automação</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <style>
+        .editable-cell input { border: none; background: transparent; width: 100%; border-bottom: 1px dashed #ccc; }
+        .editable-cell input:focus { outline: none; border-bottom: 2px solid #0d6efd; background: #f8f9fa; }
+        .error-row { background-color: #f8d7da !important; }
+        .chat-box { height: 300px; overflow-y: auto; background: #f8f9fa; border-radius: 8px; padding: 15px; border: 1px solid #dee2e6; }
+        .chat-msg { margin-bottom: 15px; max-width: 85%; }
+        .chat-msg.user { margin-left: auto; background-color: #0d6efd; color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; }
+        .chat-msg.bot { margin-right: auto; background-color: #e9ecef; color: #212529; padding: 10px 15px; border-radius: 15px 15px 15px 0; }
+        .typing-indicator { font-style: italic; color: #6c757d; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Central de Automação de Requerimentos</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card card-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <h3 class="card-title m-0"><i class="fas fa-file-excel me-2"></i> Carga em Lote (Planilha Excel)</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Faça o upload de uma planilha contendo vários requerimentos de uma só vez.</p>
+                            <div class="alert alert-info py-2">
+                                <strong>Atenção à Ordem das Colunas (Linha 1 é cabeçalho):</strong><br>
+                                <small>A(Nome), B(RS), C(PV), D(Cargo), E(Regime Jurídico), F(Data Entrada), G(Qtd Dias), H(Data Início), I(Data Término), J(Observações).</small>
+                            </div>
+                            <form th:action="@{/automacao/carga-excel}" method="post" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <input class="form-control" type="file" id="file" name="file" accept=".xlsx, .xls" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100"><i class="fas fa-upload me-2"></i> Importar Planilha</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card card-primary h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title m-0"><i class="fas fa-robot me-2"></i> Inteligência Artificial (Leitura de PDF)</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Selecione de 1 a 10 arquivos PDF. Nosso robô fará a extração dos dados.</p>
+                            <form id="formPdfLote">
+                                <div class="mb-3">
+                                    <input class="form-control" type="file" id="pdfFiles" name="pdfFiles" accept="application/pdf" multiple required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100" id="btnProcessarPdf">
+                                    <i class="fas fa-file-pdf me-2"></i> Processar PDFs e Validar
+                                </button>
+                                <div id="loadingPdf" class="text-center mt-3 d-none">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <p class="mt-2 text-muted">A Inteligência Artificial está lendo os documentos...</p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white d-flex align-items-center">
+                            <h3 class="card-title m-0 fw-bold"><i class="fas fa-magic me-2"></i> Assistente Virtual de RH (Google Gemini)</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Dúvidas sobre leis trabalhistas, licenças ou criação de textos formais? Pergunte ao assistente!</p>
+
+                            <div class="chat-box d-flex flex-column" id="chatBox">
+                                <div class="chat-msg bot shadow-sm">
+                                    <strong><i class="fas fa-robot text-primary"></i> Assistente:</strong><br>
+                                    Olá! Sou sua Inteligência Artificial integrada. Como posso ajudar o RH hoje?
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <form id="formGemini" class="d-flex">
+                                    <input type="text" id="inputGemini" class="form-control me-2" placeholder="Digite sua pergunta aqui..." required autocomplete="off">
+                                    <button type="submit" class="btn btn-info text-white fw-bold px-4" id="btnSendGemini">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4 d-none" id="areaValidacao">
+                <div class="col-12">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                            <h3 class="card-title m-0"><i class="fas fa-tasks me-2"></i> Validação de Lote</h3>
+                            <button class="btn btn-sm btn-dark" id="btnSalvarLote"><i class="fas fa-save me-2"></i> Confirmar e Salvar Lote</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <p class="text-muted"><i class="fas fa-info-circle text-info"></i> Revise os dados extraídos pelo robô abaixo. Clique nas células para editar caso a IA tenha se confundido.</p>
+
+                            <table class="table table-bordered table-striped" id="tabelaValidacao">
+                                <thead>
+                                    <tr>
+                                        <th>Arquivo/Obs</th>
+                                        <th>Nome</th>
+                                        <th style="width: 100px;">RS</th>
+                                        <th style="width: 80px;">PV</th>
+                                        <th style="width: 130px;">Data Início</th>
+                                        <th style="width: 80px;">Dias</th>
+                                        <th>Status</th>
+                                        <th style="width: 50px;">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyValidacao"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- FUNÇÃO DE SEGURANÇA CSRF ---
+        function getCsrfHeaders() {
+            const token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+            const header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+            const headers = new Headers();
+            headers.append(header, token);
+            headers.append('Content-Type', 'application/json');
+            return headers;
+        }
+
+        /* -----------------------------------------------------
+         * LÓGICA DO ASSISTENTE VIRTUAL GEMINI (CHAT)
+         * ----------------------------------------------------- */
+        const formGemini = document.getElementById('formGemini');
+        const inputGemini = document.getElementById('inputGemini');
+        const chatBox = document.getElementById('chatBox');
+        const btnSendGemini = document.getElementById('btnSendGemini');
+
+        function formatarTextoGemini(texto) {
+            let html = texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
+            html = html.replace(/\n/g, '<br>');
+            return html;
+        }
+
+        function adicionarMensagem(autor, texto, tipo) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg ' + tipo + ' shadow-sm';
+            const icon = tipo === 'user' ? '<i class="fas fa-user"></i> Você' : '<i class="fas fa-robot text-primary"></i> Assistente';
+            div.innerHTML = `<strong>${icon}:</strong><br>${formatarTextoGemini(texto)}`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return div;
+        }
+
+        formGemini.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pergunta = inputGemini.value.trim();
+            if (!pergunta) return;
+
+            adicionarMensagem('Você', pergunta, 'user');
+            inputGemini.value = '';
+            inputGemini.disabled = true;
+            btnSendGemini.disabled = true;
+
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'chat-msg bot typing-indicator';
+            typingIndicator.innerHTML = '<i class="fas fa-circle-notch fa-spin me-2"></i>A Inteligência Artificial está pensando...';
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            fetch('/automacao/chat-gemini', {
+                method: 'POST',
+                headers: getCsrfHeaders(),
+                body: JSON.stringify({ pergunta: pergunta })
+            })
+            .then(response => response.json())
+            .then(data => {
+                typingIndicator.remove();
+                adicionarMensagem('Assistente', data.resposta, 'bot');
+            })
+            .catch(error => {
+                typingIndicator.remove();
+                adicionarMensagem('Assistente', 'Ocorreu um erro ao comunicar com a IA. Verifique sua conexão.', 'bot');
+            })
+            .finally(() => {
+                inputGemini.disabled = false;
+                btnSendGemini.disabled = false;
+                inputGemini.focus();
+            });
+        });
+
+
+        /* -----------------------------------------------------
+         * LÓGICA DO LOTE PDF (Mesma de antes, mantida)
+         * ----------------------------------------------------- */
+        const formPdfLote = document.getElementById('formPdfLote');
+        const pdfFilesInput = document.getElementById('pdfFiles');
+        const btnProcessarPdf = document.getElementById('btnProcessarPdf');
+        const loadingPdf = document.getElementById('loadingPdf');
+
+        const areaValidacao = document.getElementById('areaValidacao');
+        const tbodyValidacao = document.getElementById('tbodyValidacao');
+        const btnSalvarLote = document.getElementById('btnSalvarLote');
+
+        pdfFilesInput.addEventListener('change', function() {
+            if(this.files.length > 10) {
+                alert('O limite máximo para processamento simultâneo é de 10 arquivos.');
+                this.value = '';
+            }
+        });
+
+        formPdfLote.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if(pdfFilesInput.files.length === 0) return;
+
+            const formData = new FormData();
+            for(let i=0; i<pdfFilesInput.files.length; i++){
+                formData.append('pdfFiles', pdfFilesInput.files[i]);
+            }
+
+            btnProcessarPdf.classList.add('d-none');
+            loadingPdf.classList.remove('d-none');
+            areaValidacao.classList.add('d-none');
+tbodyValidacao.innerHTML = '';
+
+            // Para o upload de arquivos com FormData, o token CSRF precisa ser adicionado ao FormData
+            const token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+            formData.append('_csrf', token);
+
+            fetch('/automacao/upload-pdf-lote', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnProcessarPdf.classList.remove('d-none');
+                loadingPdf.classList.add('d-none');
+
+                if(!Array.isArray(data) || data.length === 0){
+                    alert("A IA não conseguiu devolver resultados.");
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    const hasError = item.erro && item.erro.trim() !== '';
+                    const tr = document.createElement('tr');
+                    if (hasError) tr.classList.add('error-row');
+
+                    tr.innerHTML = `
+                        <td title="${item.erro || ''}">
+                            <small class="text-muted fw-bold">${item.observacoes || 'Lote PDF'}</small><br>
+                            ${hasError ? `<span class="badge bg-danger">Falhou</span>` : ''}
+                        </td>
+                        <td class="editable-cell"><input type="text" value="${item.nome || ''}" data-field="nome"></td>
+                        <td class="editable-cell"><input type="text" value="${item.rs || ''}" data-field="rs"></td>
+                        <td class="editable-cell"><input type="number" value="${item.pv || ''}" data-field="pv"></td>
+                        <td class="editable-cell"><input type="date" value="${item.dataInicio ? item.dataInicio.split('T')[0] : ''}" data-field="dataInicio"></td>
+                        <td class="editable-cell"><input type="number" value="${item.quantidadeDias || ''}" data-field="quantidadeDias"></td>
+                        <td>
+                            ${hasError ? `<small class="text-danger">${item.erro}</small>` : `<i class="fas fa-check-circle text-success"></i> Sucesso`}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row" title="Remover da lista"><i class="fas fa-times"></i></button>
+                        </td>
+                    `;
+                    tbodyValidacao.appendChild(tr);
+                });
+
+                areaValidacao.classList.remove('d-none');
+                window.scrollTo({ top: areaValidacao.offsetTop, behavior: 'smooth' });
+
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Erro grave de comunicação com a Inteligência Artificial.");
+                btnProcessarPdf.classList.remove('d-none');
+                loadingPdf.classList.add('d-none');
+            });
+        });
+
+        tbodyValidacao.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn-remove-row');
+            if (btn) {
+                btn.closest('tr').remove();
+                if(tbodyValidacao.children.length === 0) areaValidacao.classList.add('d-none');
+            }
+        });
+
+        btnSalvarLote.addEventListener('click', function() {
+            const linhas = tbodyValidacao.querySelectorAll('tr');
+            if(linhas.length === 0) return;
+
+            const requerimentosValidados = [];
+            let temErroBruto = false;
+
+            linhas.forEach(tr => {
+                if (tr.classList.contains('error-row')) return;
+
+                const nome = tr.querySelector('input[data-field="nome"]').value.trim();
+                const rs = tr.querySelector('input[data-field="rs"]').value.trim();
+                const pv = tr.querySelector('input[data-field="pv"]').value.trim();
+                const dataInicio = tr.querySelector('input[data-field="dataInicio"]').value;
+                const quantidadeDias = tr.querySelector('input[data-field="quantidadeDias"]').value;
+                const obs = tr.querySelector('td:first-child small').textContent;
+
+                if (!nome || !rs || !dataInicio || !quantidadeDias) {
+                    temErroBruto = true;
+                    tr.style.border = "2px solid red";
+                } else {
+                    tr.style.border = "none";
+                    requerimentosValidados.push({
+                        nome: nome,
+                        rs: rs,
+                        pv: pv ? parseInt(pv) : null,
+                        dataInicio: dataInicio,
+                        quantidadeDias: parseInt(quantidadeDias),
+                        observacoes: "Extração Lote PDF: " + obs
+                    });
+                }
+            });
+
+            if (temErroBruto) {
+                alert("Alguns registros validados estão faltando Nome, RS, Data ou Dias! Corrija as linhas em vermelho ou exclua-as.");
+                return;
+            }
+
+            if (requerimentosValidados.length === 0) {
+                alert("Nenhum requerimento válido na lista para salvar.");
+                return;
+            }
+
+            btnSalvarLote.disabled = true;
+            btnSalvarLote.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+            fetch('/automacao/salvar-lote', {
+                method: 'POST',
+                headers: getCsrfHeaders(),
+                body: JSON.stringify(requerimentosValidados)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("✅ Lote de " + requerimentosValidados.length + " requerimentos salvos com sucesso no banco de dados!");
+                    areaValidacao.classList.add('d-none');
+                    tbodyValidacao.innerHTML = '';
+                    pdfFilesInput.value = '';
+                } else {
+                    return response.text().then(t => { throw new Error(t) });
+                }
+            })
+            .catch(err => {
+                alert("Ocorreu um erro ao salvar o lote. Detalhes: " + err.message);
+            })
+            .finally(() => {
+                btnSalvarLote.disabled = false;
+                btnSalvarLote.innerHTML = '<i class="fas fa-save me-2"></i> Confirmar e Salvar Lote';
+            });
+        });
+
+    });
+    </script>
+</div>
+</body>
+</html>

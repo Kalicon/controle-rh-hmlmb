@@ -3,16 +3,25 @@ package com.hmlmb.rh.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hmlmb.rh.dto.RequerimentoDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 
 @Service
 public class PythonIntegrationService {
 
+    private static final Logger log = Logger.getLogger(PythonIntegrationService.class.getName());
     private final ObjectMapper objectMapper;
+
+    @Value("${app.python.executable:python3}")
+    private String pythonExecutable;
+
+    @Value("${app.python.script.path:scripts/extrair_dados.py}")
+    private String pythonScriptPath;
 
     public PythonIntegrationService() {
         this.objectMapper = new ObjectMapper();
@@ -21,9 +30,12 @@ public class PythonIntegrationService {
 
     public RequerimentoDTO extrairDadosDoPdf(String pdfPath) {
         try {
-            String scriptPath = Paths.get("scripts", "extrair_dados.py").toAbsolutePath().toString();
+            // Resolve o caminho absoluto de forma segura para producao
+            String scriptPath = Paths.get(pythonScriptPath).toAbsolutePath().toString();
+            
+            log.info("Iniciando extracao de PDF: Executavel [" + pythonExecutable + "] Script [" + scriptPath + "]");
 
-            ProcessBuilder processBuilder = new ProcessBuilder("python3", scriptPath, pdfPath);
+            ProcessBuilder processBuilder = new ProcessBuilder(pythonExecutable, scriptPath, pdfPath);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
@@ -36,19 +48,19 @@ public class PythonIntegrationService {
 
             int exitCode = process.waitFor();
             
-            // Tratamento: Se o Python não conseguir rodar ou explodir, devolvemos um DTO com a mensagem
             if (exitCode != 0) {
+                 log.severe("Falha na execucao do Python. Exit code: " + exitCode + " Output: " + output.toString());
                  RequerimentoDTO erroDto = new RequerimentoDTO();
-                 erroDto.setErro("Erro interno ao chamar Python. Código: " + exitCode + ". Detalhes: " + output.toString());
+                 erroDto.setErro("Erro interno ao chamar processo de extracao. Verifique os logs do servidor.");
                  return erroDto;
             }
 
-            // Mapeia o resultado (sucesso ou mensagem tratada de erro vinda do print do python) para o DTO
             return objectMapper.readValue(output.toString(), RequerimentoDTO.class);
 
         } catch (Exception e) {
+            log.severe("Erro catastrofico ao integrar com Python: " + e.getMessage());
             RequerimentoDTO erroDto = new RequerimentoDTO();
-            erroDto.setErro("Falha catastrófica de comunicação com script Python: " + e.getMessage());
+            erroDto.setErro("Falha catastrofica de comunicacao interna. Tente novamente mais tarde.");
             return erroDto;
         }
     }
