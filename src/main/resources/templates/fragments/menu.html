@@ -3,13 +3,13 @@
      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
     <!-- Brand -->
-    <a href="/dashboard" class="sidebar-brand" style="text-decoration:none;">
+    <a href="/" class="sidebar-brand" style="text-decoration:none;">
         <div class="sidebar-brand-icon">
             <i class="fas fa-hospital-user"></i>
         </div>
         <div class="sidebar-brand-text">
             <span class="sidebar-brand-name">Controle RH</span>
-            <span class="sidebar-brand-tag">HMLMB · Sistema Interno</span>
+            <span class="sidebar-brand-tag">Maternidade Leonor Mendes de Barros</span>
         </div>
     </a>
 
@@ -19,7 +19,7 @@
         <p class="nav-section-title">Principal</p>
         <ul>
             <li th:class="${activePage == 'dashboard' ? 'active' : ''}">
-                <a href="/dashboard">
+                <a href="/">
                     <i class="fas fa-gauge-high nav-icon"></i>
                     Dashboard
                 </a>

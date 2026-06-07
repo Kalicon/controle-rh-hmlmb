@@ -11,7 +11,7 @@
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
 [![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 
-> Sistema web desenvolvido para facilitar o controle de férias dos funcionários do **Hospital Municipal de Luziânia - HMLMB**, automatizando o lançamento via SGP e o gerenciamento de requerimentos.
+> Sistema web desenvolvido para facilitar o controle de férias dos funcionários do **Hospital Maternidade Leonor Mendes de Barros - HMLMB**, automatizando o lançamento via SGP e o gerenciamento de requerimentos.
 
 </div>
 
@@ -170,7 +170,7 @@ Este é um projeto interno do HMLMB. Para sugestões ou bugs, abra uma [Issue](h
 
 <div align="center">
 
-**Desenvolvido para o Hospital Municipal de Luziânia - HMLMB**
+**Desenvolvido para o Hospital Maternidade Leonor Mendes de Barros - HMLMB**
 
 © 2024 Sistema de Controle RH · Todos os direitos reservados
 
