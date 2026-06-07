@@ -1,0 +1,21 @@
+# --- PERFIL DE DESENVOLVIMENTO LOCAL (NAO COMMITAR ESTE ARQUIVO!) ---
+# Este arquivo usa H2 (banco em memória) para desenvolvimento local sem precisar do Supabase.
+# Copie este arquivo para application-local.properties e ajuste conforme necessário.
+
+spring.datasource.url=jdbc:h2:mem:rhferias;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.driver-class-name=org.h2.Driver
+
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+
+# Console H2 disponível em http://localhost:8080/h2-console
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+spring.servlet.multipart.max-file-size=15MB
+spring.servlet.multipart.max-request-size=15MB
+
+logging.level.com.hmlmb=DEBUG

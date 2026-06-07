@@ -31,3 +31,23 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Node.js ###
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+### Logs ###
+logs/
+*.log
+*.log.*
+
+### Arquivos de Propriedades Sensíveis (Ambiente Local) ###
+application-local.properties
+application-dev.properties
+*-secret.properties
+
+### Sistema Operacional ###
+.DS_Store
+Thumbs.db
