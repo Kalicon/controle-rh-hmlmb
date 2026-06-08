@@ -7,316 +7,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0f4c81 70%, #1a6fa8 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 12s ease infinite;
-            overflow: hidden;
-            position: relative;
-        }
-
-        @keyframes gradientShift {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Floating orbs */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            animation: floatOrb 8s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        .orb-1 {
-            width: 400px; height: 400px;
-            background: rgba(59, 130, 246, 0.25);
-            top: -100px; left: -100px;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 300px; height: 300px;
-            background: rgba(16, 185, 129, 0.2);
-            bottom: -80px; right: -80px;
-            animation-delay: -4s;
-        }
-
-        .orb-3 {
-            width: 200px; height: 200px;
-            background: rgba(139, 92, 246, 0.15);
-            top: 50%; left: 60%;
-            animation-delay: -2s;
-        }
-
-        @keyframes floatOrb {
-            0%, 100% { transform: translateY(0px) scale(1); }
-            50%       { transform: translateY(-30px) scale(1.05); }
-        }
-
-        /* Card principal */
-        .login-wrapper {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 440px;
-            padding: 20px;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 48px 40px;
-            box-shadow:
-                0 32px 64px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Logo / Branding */
-        .brand-area {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-
-        .brand-icon {
-            width: 70px; height: 70px;
-            background: linear-gradient(135deg, #3b82f6, #06b6d4);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
-            animation: iconPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes iconPulse {
-            0%, 100% { box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4); }
-            50%       { box-shadow: 0 8px 48px rgba(59, 130, 246, 0.65); }
-        }
-
-        .brand-icon i {
-            font-size: 32px;
-            color: #fff;
-        }
-
-        .brand-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: -0.5px;
-            margin-bottom: 4px;
-        }
-
-        .brand-subtitle {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.55);
-            font-weight: 400;
-            letter-spacing: 0.3px;
-        }
-
-        /* Alertas */
-        .alert-box {
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .alert-error {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-        }
-
-        .alert-info {
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #86efac;
-        }
-
-        /* Form */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.95rem;
-            transition: color 0.2s;
-            pointer-events: none;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 14px 16px 14px 44px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.25s ease;
-            outline: none;
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .form-input:focus {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(59, 130, 246, 0.7);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        .form-input:focus + .input-icon,
-        .input-wrapper:focus-within .input-icon {
-            color: rgba(59, 130, 246, 0.9);
-        }
-
-        /* Botão */
-        .btn-login {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
-            margin-top: 8px;
-            letter-spacing: 0.3px;
-        }
-
-        .btn-login::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.45);
-        }
-
-        .btn-login:hover::before {
-            left: 100%;
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        /* Footer */
-        .login-footer {
-            text-align: center;
-            margin-top: 28px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .login-footer p {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .login-footer p i {
-            font-size: 0.75rem;
-            color: rgba(59, 130, 246, 0.7);
-        }
-
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .divider-text {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.3);
-            white-space: nowrap;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 40%,#0f4c81 70%,#1a6fa8 100%);background-size:400% 400%;animation:gradientShift 12s ease infinite;overflow:hidden;position:relative}
+        @keyframes gradientShift{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+        .orb{position:absolute;border-radius:50%;filter:blur(80px);animation:floatOrb 8s ease-in-out infinite;pointer-events:none}
+        .orb-1{width:400px;height:400px;background:rgba(59,130,246,.25);top:-100px;left:-100px}
+        .orb-2{width:300px;height:300px;background:rgba(16,185,129,.2);bottom:-80px;right:-80px;animation-delay:-4s}
+        .orb-3{width:200px;height:200px;background:rgba(139,92,246,.15);top:50%;left:60%;animation-delay:-2s}
+        @keyframes floatOrb{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+        .login-wrapper{position:relative;z-index:10;width:100%;max-width:440px;padding:20px}
+        .login-card{background:rgba(255,255,255,.07);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:48px 40px;box-shadow:0 32px 64px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);animation:slideUp .6s cubic-bezier(.16,1,.3,1)}
+        @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        .brand-area{text-align:center;margin-bottom:36px}
+        .brand-icon{width:70px;height:70px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 32px rgba(59,130,246,.4)}
+        .brand-icon i{font-size:32px;color:#fff}
+        .brand-title{font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-.5px;margin-bottom:4px}
+        .brand-subtitle{font-size:.82rem;color:rgba(255,255,255,.5);font-weight:400}
+        .alert-box{padding:12px 16px;border-radius:12px;font-size:.875rem;font-weight:500;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+        .alert-error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+        .alert-info{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac}
+        .form-group{margin-bottom:20px}
+        .form-label{display:block;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+        .input-wrapper{position:relative}
+        .input-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.4);font-size:.95rem;pointer-events:none}
+        .form-input{width:100%;padding:14px 16px 14px 44px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:.95rem;font-family:'Inter',sans-serif;transition:all .25s ease;outline:none}
+        .form-input::placeholder{color:rgba(255,255,255,.3)}
+        .form-input:focus{background:rgba(255,255,255,.12);border-color:rgba(59,130,246,.7);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+        .btn-login{width:100%;padding:15px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s ease;margin-top:8px;letter-spacing:.3px}
+        .btn-login:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(59,130,246,.45)}
+        .btn-login:active{transform:translateY(0)}
+        .login-footer{text-align:center;margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)}
+        .login-footer p{font-size:.8rem;color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;gap:6px}
+        .login-footer p i{font-size:.75rem;color:rgba(59,130,246,.7)}
     </style>
 </head>
 <body>
-    <!-- Orbs de fundo -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
@@ -324,16 +49,14 @@
     <div class="login-wrapper">
         <div class="login-card">
 
-            <!-- Branding -->
             <div class="brand-area">
                 <div class="brand-icon">
                     <i class="fas fa-hospital-user"></i>
                 </div>
                 <h1 class="brand-title">Controle RH</h1>
-                <p class="brand-subtitle">Hospital Maternidade Leonor Mendes de Barros &middot; HMLMB</p>
+                <p class="brand-subtitle">Maternidade Leonor Mendes de Barros &middot; HMLMB</p>
             </div>
 
-            <!-- Alertas -->
             <div th:if="${param.error}" class="alert-box alert-error">
                 <i class="fas fa-exclamation-circle"></i>
                 <span>Usuário ou senha inválidos. Tente novamente.</span>
@@ -343,21 +66,12 @@
                 <span>Você foi desconectado com segurança.</span>
             </div>
 
-            <!-- Formulário -->
             <form th:action="@{/login}" method="post">
-
                 <div class="form-group">
                     <label class="form-label" for="username">Usuário</label>
                     <div class="input-wrapper">
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            class="form-input"
-                            placeholder="Digite seu usuário"
-                            required
-                            autofocus
-                            autocomplete="username">
+                        <input type="text" id="username" name="username" class="form-input"
+                               placeholder="Digite seu usuário" required autofocus autocomplete="username">
                         <i class="fas fa-user input-icon"></i>
                     </div>
                 </div>
@@ -365,24 +79,17 @@
                 <div class="form-group">
                     <label class="form-label" for="password">Senha</label>
                     <div class="input-wrapper">
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="form-input"
-                            placeholder="Digite sua senha"
-                            required
-                            autocomplete="current-password">
+                        <input type="password" id="password" name="password" class="form-input"
+                               placeholder="Digite sua senha" required autocomplete="current-password">
                         <i class="fas fa-lock input-icon"></i>
                     </div>
                 </div>
 
                 <button type="submit" id="btn-entrar" class="btn-login">
-                    <i class="fas fa-sign-in-alt me-2"></i> Entrar no Sistema
+                    <i class="fas fa-sign-in-alt"></i> Entrar no Sistema
                 </button>
             </form>
 
-            <!-- Rodapé -->
             <div class="login-footer">
                 <p>
                     <i class="fas fa-shield-halved"></i>
